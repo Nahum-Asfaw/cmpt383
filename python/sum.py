@@ -1,3 +1,5 @@
+import timeit
+
 # recursive takes lines, does opearation similar to while loop
 def recursive(lines, words, sum5):
     if len(words) == 0:
@@ -80,5 +82,8 @@ def rec():
         lines = f.readlines()
         recursive(lines, [], 0)
 # --------------------------------------------------------------------------
-import timeit
-timeit.timeit("for_loop", number=1000)
+print("for loop:", timeit.timeit(for_loop, globals=globals(), number=1))
+print("while_loop:", timeit.timeit(while_loop, globals=globals(), number=1))
+print("lc no walrus:", timeit.timeit(lc_no_walrus, globals=globals(), number=1))
+print("lc walrus:", timeit.timeit(lc_walrus, globals=globals(), number=1))
+print("rec:", timeit.timeit(rec, globals=globals(), number=1))
