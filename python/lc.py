@@ -49,5 +49,3 @@ print([(x, y) for x in range(1, 101)
 # If and B are two sets, we can represent their Cartesian product A x B as
 # [(a, b) for a in A
 #         for b in B]
-
-# CONTINUE ON IDK WHEN?
