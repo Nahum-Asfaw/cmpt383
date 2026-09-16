@@ -49,3 +49,14 @@ print([(x, y) for x in range(1, 101)
 # If and B are two sets, we can represent their Cartesian product A x B as
 # [(a, b) for a in A
 #         for b in B]
+
+# if A1, ..., An all have m elements, then A1 x A2 x ... x An has m*m*... = m^n
+# elements, and so the comprehension makes m^n elements, a running time which is exponential in n. 
+# For example, if all the sets are 0, 1, then the comprehension makes 2^n elements, and contains
+# all the bit strings of length n.
+# For instance, here are all 2^3 = 8 bit sequences of length 3:
+print([(a, b, c) for a in [0, 1]
+                 for b in [0, 1]
+                 for c in [0, 1]])
+
+# Do abc_puzzle
