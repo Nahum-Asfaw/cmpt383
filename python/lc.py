@@ -59,8 +59,6 @@ print([(a, b, c) for a in [0, 1]
                  for b in [0, 1]
                  for c in [0, 1]])
 
-# Do abc_puzzle.py
-# Do comprehensions.py
-# Do scratch.py
+# Look at zip_demo_sol.py
 
 # CSV = Comma Seperated Values, common way of storing values in python

@@ -19,3 +19,9 @@ def f(a, b, c):
 # f(*[1, 2, 3])
 
 # Task: Write the implementation for transposing a matrix. Use comprehensions
+# matrix notation: [[1, 2, 3], [4, 5, 6]] <--transpose--> [[1, 4], [2, 5], [3, 6]]
+
+# From the notes:
+A = [[1, 2 ,3], [4, 5, 6]]
+T = [list(row) for row in zip(*A)] 
+print("Transpose: ", T) 
