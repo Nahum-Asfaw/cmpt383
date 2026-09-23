@@ -332,3 +332,14 @@ print(calculate_area(("triangle", 3, 8)))  # 12.0
 print(calculate_area(("square", 7)))       # 49
 print(calculate_area(("hexagon", 4)))      # Unknown shape
 # Done!
+
+# Sept 23
+# Side effects of a func: reading files, printing, etc. Returns None
+# A func is impure if it has a side effect
+# A func is pure if there are no side effects, and it returns a value
+# Consider using pure functions as much as possible!!!
+# E.g., cannot do assignments with global variables in a pure function,
+# as that is considered a side effect (no return value?).
+# A solution is to use helper functions to make calculations.
+# In python, you can easily pass functions to other functions, e.g., 
+# def f(g): ...

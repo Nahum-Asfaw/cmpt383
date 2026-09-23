@@ -64,3 +64,8 @@ increment()
 print(get_n()) # 2
 set_n(10)
 print(get_n()) # 10
+
+# Treat closures like objects, being
+# closure = <f, environment>
+# set_n() ,get_n(), and increment() all share the same environment?
+# Idk possibly because they're all defined in the same larger func
