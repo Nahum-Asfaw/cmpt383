@@ -1,11 +1,11 @@
 # Python_practice
 # Q1
-def fib(n):
+def _fib(n):
     if n == 0:
         return 0
     if n == 1:
         return 1
-    return fib(n-1) + fib(n-2)
+    return _fib(n-1) + _fib(n-2)
 
 class Fib:
     def __init__(self, n):
@@ -18,7 +18,7 @@ class Fib:
     def __next__(self):
         if self.index < self.n:
             self.index += 1
-            return fib(self.index -1)
+            return _fib(self.index -1)
         else:
             raise StopIteration
 
@@ -31,7 +31,7 @@ testFib(10)
 # Q2
 def fib_gen(n):
     for x in range(0, n):
-        yield fib(x)
+        yield _fib(x)
     
 def testFib2(n):
     for i in fib_gen(n):
@@ -48,19 +48,12 @@ def take_any(f): # prints the func name, parameters, and return value
         return this
     return print_stuff
     
-def _fib(n):
-    if n == 0:
-        return 0
-    if n == 1:
-        return 1
-    return _fib(n-1) + _fib(n-2)
-
 @take_any
-def fib_rec(n):
+def fib(n):
     return _fib(n)
 
 def testFib3(n):
-    print(fib_rec(n))
+    print(fib(n))
 #----------------------------
 testFib3(10)
 #----------------------------

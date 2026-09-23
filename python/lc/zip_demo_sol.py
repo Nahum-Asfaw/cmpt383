@@ -16,7 +16,9 @@ def zip_tricks():
     for (a, b, c) in zip(A, B, C):
         print(a, b, c)
 
-# zip_tricks()
+    print()
+
+#zip_tricks()
 
 #
 # matrices
@@ -37,7 +39,7 @@ m2 = [
 def print_matrix(matrix):
     for row in matrix:
         for val in row:
-            print(f'{val} ', end='')
+            print(val, end=" ")
         print()
 
 def matrix_demo():
@@ -54,22 +56,12 @@ def matrix_demo():
 # assumes matrix is 3 rows, 3 columns
 def transpose3(matrix):
     return [[a, b, c] 
-            for a, b, c in zip(matrix[0], matrix[1], matrix[2])
-           ]
-    # result = []
-    # for a, b, c in zip(matrix[0], matrix[1], matrix[2]):
-    #     result.append([a, b, c])
-    # return result
+            for a, b, c in zip(matrix[0], matrix[1], matrix[2])]
 
 #
 # Try replacing m2 by m1 in the following code: you'll see that transpose chops
 # off some of the result!
-#
-# print_matrix(m2)
-# print()
-# print_matrix(transpose3(m2))
 
-#
 # Dealing with multiple function arguments.
 #
 def like(a, b, c):
@@ -81,7 +73,7 @@ def like_demo():
     like(nums[0], nums[1], nums[2])
     like(*nums) # * unpacks nums to be parameters for like
 
-# like_demo()
+like_demo()
 
 #
 # Transposing any matrix with zip
@@ -91,13 +83,3 @@ def transpose(matrix):
             for nums in zip(*matrix)
            ]
 
-print_matrix(m1)
-print()
-print_matrix(transpose(m1))
-
-print()
-print()
-
-print_matrix(m2)
-print()
-print_matrix(transpose(m2))
