@@ -13,13 +13,9 @@ print(p1)
 eg = ["Even", "Odd", "I AmEven", "I AmOdd"]
 p2 = [c for c in eg if len(c) % 2 == 0]
 print(p2)
-# 3) Might be a bad ans...
-def eval(x):
-    if x > 0: return x -1
-    else: return x + 1
-
+# 3) 
 eg = [0, 2, -2, 0, -3, 5]
-p3 = [eval(x) for x in eg if x != 0]
+p3 = [x+1 if x < 0 else x-1 for x in eg if x != 0]
 print(p3)
 # 4)
 p4 = [(a, b, c ,d) for a in range(0, 2) for b in range(0, 2) 
