@@ -487,7 +487,7 @@ def do_laundry():
 # Time taken: 1.0003 seconds or smth idk
 
 # This works, but it's messy, and the timing code is not reusable. So instead, let's write a function that can
-# take do_laundry as input and return a new function that tiems it:
+# take do_laundry as input and return a new function that times it:
 def make_timed_function(f):
     def timed_function():
         import time
@@ -501,7 +501,171 @@ def make_timed_function(f):
 timed_do_laundry = make_timed_function(do_laundry)
 timed_do_laundry()
 
-# yk the rest
-# and thats all. Ive read the notes for generators enough times for it to be a waste for me to 
-# re-write it here.
-# FIND MORE REVIEW MATERIAL (BE IT OLD ASSIGNMENTS OR PRACTICE EXAMS)
+# Doing laundry...
+# Laundry done
+# Time taken: 1.0003 seconds or smth idk
+
+# This is a much nicer way to do it. The function make_timed_function takes any function f
+# that has no params and returns a new function that calls f and also prints the time it took
+# to execute f. The user of make_timed_function doesn't ned to know the details of how to time
+# the function.
+
+# This is done commonly enough that python provides a special syntax for it:
+@make_timed_function
+def do_laundry():
+    import time
+    print("Doing laundry ...")
+    time.sleep(1)
+    print("Laundry done")
+
+do_laundry()
+
+# Doing laundry...
+# Laundry done
+# Time taken: 1.0003 seconds or smth idk
+
+# @make_timed_function is a decorator. It does the same thing as timed_do_laundry = make_timed_function(do_laundry),
+# but keeping the same name do_laundry.
+
+# Here's another example:
+def make_hello_goodbye(f):
+    def hello_goodbye():
+        print(f"{f.__name__} called ...")
+        result = f()
+        print(f"... {f.__name__} done")
+        return result
+    return hello_goodbye
+
+@make_hello_goodbye
+def do_laundry():
+    import time
+    print("Doing laundry ...")
+    time.sleep(1)
+    print("Laundry done")
+
+do_laundry()
+
+# do_laundry called ...
+# Doing laundry ...
+# Laundry done
+# ... do_laundry done
+
+# You can give multiple decorators to a function:
+@make_hello_goodbye
+@make_timed_function
+
+def do_laundry():
+    import time
+    print("Doing laundry ...")
+    time.sleep(1)
+    print("Laundry done")
+
+do_laundry()   
+
+# timed_function called ...
+# Doing laundry
+# Laundry done
+# Time taken: 1.0004 seconds
+# ... timed_function done
+
+# Notice that the name of the function is timed_function, not do_laundry. That's because the first make_timed_function is applied.
+# and then make_hello_goodbye to the result.
+
+# The decorators we've seen so far all take a function as input, and importantly, that function has no params. What if we want
+# to decorate a function that does have params? It's not immidiately obvious how to do this.
+
+# Let's add some params to do_laundry:
+def do_laundry(who, duration):
+    import time
+    print(f"{who} is doing laundry ...")
+    time.sleep(duration)
+    print(f"{who}'s laundry is done")
+
+# We can't use the make_timed_function decorator we wrote earlier because it assumes that the function being decorated has no params.
+# We could modify it to work with this version, which takes two params, it it would be better to make a general solution that works
+# with any number of params.
+
+# The trick to handling params in Python is to use args and **kwargs to capture the positional keyword arguments. This works with
+# any number of params:
+
+def make_timed_function(f):
+    def timed_function(*args, **kwargs):
+        import time
+        start_time = time.time()
+        result = f(*args, **kwargs)
+        end_time = time.time()
+        print(f"Time taken: {end_time - start_time} seconds")
+        return result
+    return timed_function
+
+@make_timed_function
+def do_laundry(who, duration):
+    import time
+    print(f"{who} is doing laundry ...")
+    time.sleep(duration)
+    print(f"{who}'s laundry is done")
+
+do_laundry("Alice", 1.2)
+
+# Alice is doing laundry ...
+# Alice's laundry is done
+# Time taken: 1.00004 seconds
+
+# Looat the header for timed_function: def timed_function(*args, **kwargs)
+# *args is a function header is python's way of capturing 0 or more positional arguments. Positional arguments are passed in the
+# order they are given, e.g., in do_laundry("Alice", 1.2), "Alice" is the first argument and so get's assigned to who, and 1.2 is 
+# the second argument, and so gets assigned to duration
+
+# **kwargs in a function header is python's way of capturing 0 or more keyword arguments. Keyword arguments are passed as key=value
+# pairs, e.g., we would call do_laundry(duration=1.2, who="Alice"), and 1.2 gets assigned to duration and "Alice" gets assigned to
+# who.
+
+# If a function uses both postional arguments and keyword arguments, the positional arguments must come first, followed by the
+# keyword arguments. So, to get all kinds of arguments, we write def timed_function(*args, **kwargs)
+
+# Toby said we don't need to understand the reasoning behind *args, *kwargs, just need to know when/how to use it.
+
+# We can use this version of make_timed_function to decorate any function, e.g.:
+
+@make_timed_function
+def hello_world():
+    print("Hello world!")
+
+hello_world()
+
+# Hello, world
+# Time taken: 1.120000e-05 seconds
+
+# If you decorate a recursive function, then each recursive call is decorated. For example:
+
+@make_timed_function
+def factorial(n):
+    if n==0:
+        return 1
+    return n * factorial(n-1)
+
+print(factorial(5))
+
+# Time taken: 1.1920928955078125e-06 seconds
+# Time taken: 1.5974044799804688e-05 seconds
+# Time taken: 2.002716064453125e-05 seconds
+# Time taken: 2.2172927856445312e-05 seconds
+# Time taken: 2.384185791015625e-05 seconds
+# Time taken: 2.5987625122070312e-05 seconds
+# 120
+
+# If you only want to print the time for he outermost call, then you can use another helper function:
+
+def _factorial(n):
+    if n == 0:
+        return 1
+    return n *_factorial(n-1)
+
+@make_timed_function
+def factorial(n):
+    return _factorial(n)
+
+print(factorial(5))
+
+# Time taken: 2.1457672119140625e-06 seconds
+# 120

@@ -54,7 +54,7 @@ def my_zip(*args):
         print("n < 2")
         raise ValueError
     list = []
-    for y in range (0, len(args[0])):
+    for y in range(len(args[0])):
         list.append(tuple(x[y] for x in args))
     
     return list
