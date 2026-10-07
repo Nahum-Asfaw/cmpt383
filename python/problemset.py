@@ -1,7 +1,7 @@
 # Python Problemset
 
 # Q1: List comprehensions are a compact way of creating lists, tuples, and other objects using 
-# a format simlar to mathematical set notation. Like set notation, you firrt define what you want
+# a format simlar to mathematical set notation. Like set notation, you first define what you want
 # the returned value to look like (e.g., x**2), then describe what the range and conditions are
 # for this set. So if you wanted x**2 over 0, 2, 4, ..., 10, (0 to 10 with only even numbers),  
 # it can be represented as [x**2 for x in range(0, 11) if x % 2 == 0]
