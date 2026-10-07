@@ -33,9 +33,7 @@
 ;; integers L.
 ;;
 (define (count-evens L)
-  ;;'todo
-  
-  )
+  'todo)
 
 ;;
 ;; Problem 2
