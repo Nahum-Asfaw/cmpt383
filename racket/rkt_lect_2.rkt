@@ -69,3 +69,58 @@
 
 (define (range n)
   (range-acc n 0))
+
+;; member:
+(define (member? x L)
+  (cond [(empty? L)
+         #f]
+        [(equal? x (first L))
+         #t]
+        [else
+         (member? x (rest L))]
+        ))
+
+;; (last l)
+;; returns the final (top-level) element of l
+
+(define (last L)
+  (cond [(empty? L)
+         '()]
+        [else
+         (cond [(empty? (rest L))
+               (first L)]
+               [else
+                (last (rest L))]
+               )]
+        ))
+
+;; (remove-all x L)
+;; remove all instances of L without x
+(define (remove-all x L)
+  (cond [(empty? L)
+         '()]
+        [(equal? x (first L))
+         (remove-all x (rest L))]
+        [else
+         (cons (first L) (remove-all x (rest L)))]
+        ))
+        
+;; append
+(define (append A B)
+  (cond [(empty? A)
+         B]
+        [else
+         (cons (first A) (append (rest A) B))]
+        ))
+
+;; concat
+;; returns a new list that consists of all the elements of the lists on
+;; list-of-lists
+;; > (concat '((1 2) (three four five) (six) (7 8)))
+;; > '(1 2 three four fie six 7 8)
+(define (concat lol)
+  (cond [(empty? lol)
+         '()]
+        [else
+         (append (first lol) (concat (rest lol)))]
+        ))
