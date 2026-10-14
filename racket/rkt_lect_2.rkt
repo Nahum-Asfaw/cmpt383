@@ -13,9 +13,12 @@
 
 (define (sign n)
   (cond [(not (number? n)) (error "not a number")]
-        [(< n 0)          'negative]
-        [(= n 0)              'zero]
-        [#t               'positive]
+        [(< n 0)
+         'negative]
+        [(= n 0)
+         'zero]
+        [#t
+         'positive]
         ))
 
 ;; Recursion:
@@ -54,3 +57,15 @@
 ;; HW: Write a function called range that works like this:
 ;; > (range 5)
 ;; '(0 1 2 3 4)
+
+;; Recursion:
+;; - Base case: 
+(define (range-acc n x)
+  (cond [(>= x n)
+         '()]
+        [else
+         (cons x (range-acc n (+ x 1)))]
+        ))
+
+(define (range n)
+  (range-acc n 0))
