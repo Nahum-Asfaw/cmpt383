@@ -74,14 +74,43 @@
         (op (first L) (foldr op init (rest L)))]
         ))
 
+;; sum-f
 (define (sum-f L)
   (foldr + 0 L))
 
+;; factorial-f
 (define (factorial-f L)
   (foldr * 1 L))
 
+;; length-f
 (define (length-f L)
-  (foldr (lambda (rest x) (+ x 1)) 0 L))
+  (foldr (lambda (x) (+ x 1)) 0 L))
 
-#;(define (member-f L)
-  (foldr (lambda (next x) (or (equal? x 
+;; member-f
+(define (member-f x L)
+  (foldr (lambda (next acc) (or (equal? next x) acc)) #f L))
+
+;; Implementing more funcs as folds
+;; all-f
+(define (all-f pred? L)
+  (foldr (lambda (next acc) (and (pred? next) acc)) #t L))
+
+;; none-f
+(define (none-f pred? L)
+  (foldr (lambda (next acc) (and (not (pred? next)) acc)) #t L))
+
+;; or nonef-lazy
+(define (none-f-lazy pred? L)
+  (not (all-f pred? L)))
+
+;; reverse-f (append (list (first L)) Acc)
+(define (reverse-f L)
+  (foldr (lambda (next acc) (append acc (list next))) '() L))
+
+;; filter-f
+(define (filter-f pred? L)
+  (foldr (lambda (next acc) (cond [(pred? next) (cons next acc)][else acc])) '() L))
+
+;; count-occ-f
+(define (count-occ-f x L)
+  (foldr (lambda (next acc) (cond [(equal? next x) (+ acc 1)][else acc])) 0 L))

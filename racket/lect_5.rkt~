@@ -1,0 +1,19 @@
+#lang tiny-lisp
+(define (foldr op init L)
+  (cond [(empty? L)
+         init]
+        [else
+         (op (first L) (foldr op init (rest L)))]
+        ))
+
+;; member-f
+(define (member-f x L)
+  (foldr (lambda (next acc) (or (equal? next x) acc)) #f L))
+
+;; count-occ-f
+(define (count-occ-f x L)
+  (foldr (lambda (next acc) (cond [(equal? next x) (+ acc 1)][else acc])) 0 L))
+
+;; map-f
+(define (map-f f L)
+  (foldr (lambda (next acc) (cons (f next) acc)) '() L))
