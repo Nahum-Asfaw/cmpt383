@@ -93,17 +93,17 @@
          (cons (first A) (append (rest A) B))]
         ))
 
-(define (zip-help V A B)
+(define (zip-help A B acc)
   (cond [(empty? A)
-         V]
+         acc]
         [(empty? B)
-         V]
+         acc]
         [else ;; Make V the new list that has ((first A) (first B))
-           (zip-help (append V (list (list (first A) (first B)))) (rest A) (rest B))]
+           (zip-help (rest A) (rest B) (append acc (list (list (first A) (first B)))))]
         ))
 
 (define (zip A B)
-  (zip-help '() A B))
+  (zip-help A B '()))
 
 ;;
 ;; Problem 4
