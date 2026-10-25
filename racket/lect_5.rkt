@@ -436,6 +436,10 @@
 (define (is-true? e) (equal? e 't))
 (define (is-false? e) (equal? e 'f))
 
+(define (is-literal? e)
+  (or (is-false? e)
+      (is-true? e)))
+
 ;; general helper functions
 (define (length L) (cond [(empty? L)
                           0]
@@ -445,6 +449,9 @@
 
 (define (second L)
   (first (rest L)))
+
+(define (third L)
+  (first (rest (rest L))))
 
 ;; returns true if L is a list of length n
 (define (nL? n L)
@@ -461,4 +468,150 @@
 ;; recognizing binary expressions of the form (p op q)
 (define (is-bin-op? e op)
   (and (nL? 3 e) ;; makes sense
-       (equal? op (second e)))) ;; ???
+       (equal? op (second e)))) ;; nvm i get it. 'op' is passed as a param, so the following
+                                ;; funcs will use o for diff binary operations.
+
+
+(define (is-and? e) (is-bin-op? e 'and))
+(define (is-or? e) (is-bin-op? e 'or))
+(define (is-nand? e) (is-bin-op? e 'nand))
+(define (is-implies? e) (is-bin-op? e 'implies))
+(define (is-iff? e) (is-bin-op? e 'iff))
+
+;; Notice that none of the above recognizers are recursive. They only check the top-level form of
+;; an expression.
+;; Now we can write a recursive function that test for valid propositional logic expressions:
+(define (is-expr? e)
+  (cond
+    [(is-literal? e)
+     #t]
+    [(is-not? e)
+     (is-expr? (second e))]
+    [(or (is-and? e)
+         (is-or? e)
+         (is-nand? e)
+         (is-implies? e)
+         (is-iff? e))
+     (and (is-expr? (first e))
+          (is-expr? (third e)))]
+    [else
+     #f]
+    ))
+
+;; Evaluating Propositional Expressions
+;; Every literal propositional evaluates to either t or f. We can evaluate them like this:
+(define (eval-prop-bool e)
+  (cond
+    [(is-false? e)
+     #f]
+    [(is-true? e)
+     #t]
+    [(is-not? e)
+     (not (eval-prop-bool (second e)))]
+    [(is-and? e)
+     (and (eval-prop-bool (first e))
+          (eval-prop-bool (third e)))]
+    [(is-or? e)
+     (or (eval-prop-bool (first e))
+         (eval-prop-bool (second e)))]
+    [(is-nand? e)
+     (not (and (eval-prop-bool (first e))
+               (eval-prop-bool (third e))))]
+    [(is-implies? e)
+     (or (not (eval-prop-bool (first e)))
+         (eval-prop-bool (third e)))]
+    [(is-iff? e)
+     (equal? (eval-prop-bool (first e))
+             (eval-prop-bool (third e)))]
+    [else
+     #f]
+    ))
+
+(define (eval-prop e)
+  (cond [(eval-prop-bool e)
+         't]
+        [else
+         'f]
+        ))
+
+;; eval-prop-bool returns racket boolean values, i.e., #t and #f. We do this for convinience so that we can
+;; use the built-in racket forms and, or. and not. Otherwise, we'd have to write special-purpose versions of
+;; and, or, and not that work with 't and 'f.
+
+;; Rewritting an expression using just nand
+;; an interesting fact about prop logic is that any expression can be re-written as a logically equivalent
+;; one using only the nand operator. This can be useful in eletronic circuit design, where nand gates are
+;; the basic building blocks.
+
+;; We need some rules to convert a propositional logic expression into an equivalent nand-only expression:
+;; - (not p) is logically equivalent to (p nand p)
+;; - (p and q) is logically equal to ((p nand q) nand (p nand q))
+;; - (p or q) is logically equal to ((p nand p) nand (q nand q))
+;; (p implies q) and (p iff q) are intentionally left out for now and left as an exercise for the reader.
+;; Note that (p implies q) is logically equal to ((not p) or q) and (p iff q) is logically equal to
+;; (p and q) or ((not p) and (not q))
+;; In addition to literals, 't and 'f, our to-nand function will handle other variables, like p or q.
+;; So, for example, (p and q) will be rewritten as ((p nand q) nand (p nand q)).
+
+;; Converts propositional logic expressoins e to a nand-only expression.
+;; Assumes e is a valid propositional logic expressoin, and does not
+;; contain implies or iff operators. Variable names can be any symbol.
+(define (make-nand p q)
+  (list p 'nand q))
+
+(define (to-nand e)
+  (cond [(symbol? e)
+         e]          ;; returns symbol unchanged
+        [(is-not? e) ;; (not p) = (p nand p)
+         (let ([second-nand
+                (to-nand (second e))])
+           (make-nand second-nand 
+                      second-nand))]
+        [(is-and? e) ;; (p and q) = ((p nand q) nand (p nand q))
+         (let ([p
+                (to-nand (first e))]
+                (q
+                (to-nand (third e))))
+           (make-nand (make-nand p q)
+                      (make-nand p q)))]
+        [(is-or? e) ;; (p or q) = ((p nand p) nand (q nand q))
+         (let ([p
+                (to-nand (first e))]
+               (q
+                (to-nand (third e))))
+           (make-nand (make-nand p p)
+                      (make-nand q q)))]
+        [else
+         (error "to-nand: unknown expression")]
+        ))
+
+;; We say that to-nand compiles an expression into a nand-only expression, and so to-nand is an example
+;; of a compiler.
+
+;; Removing Double Negations
+;; Another interesting aplication is to simplify an expression. For example, the double negation elimination rule says that
+;; any expression of the form (not (not p)) is logically equivalent to p.
+;; Let's write a function that removes double negations:
+
+;; double negation elimination
+;; (not (not expr)) ==> expr
+(define (simplify e)
+  (cond [(symbol? e)
+         e]
+        [(and (is-not? e) ;; e = (not (not p))
+              (is-not? (second e)))]
+        [(is-not? e)
+         (list 'not (simplify (second e)))]
+        [(is-and? e)
+         (list (simplify (first e))
+               'and
+               (simplify (third e)))]
+        [(is-or? e)
+         (list (simplify (first e))
+               'or
+               (simplify (third e)))]
+        [else
+         (error "simplify: unkown expression")]
+        ))
+
+;; There are many other simplifications we can apply, e.g., (f or e) is logically equivalent to e.
