@@ -150,8 +150,10 @@
 ;; (first L) = cond, (second L) = case, (third L) = if case, (fourth L) = result case
 (define (second L)
   (first (rest L)))
+
 (define (third L)
   (first (rest (rest L))))
+
 (define (fourth L)
   (first (rest (rest L))))
 
@@ -159,6 +161,35 @@
   (list 'cond (list (second L) (third L)) (list 'else (fourth L)))
   )
 
+;; NEW Q9)
+;; idea:
+;; - if (first L) is a list, evaluate that expresion and return the value.
+;; - else, do ((second L) (first L) (third L))
+;; Assumptions:
+;; - Input L will have three elements
+;; - Input will have the structure (element op element)
+(define (evaluate L)
+  (cond [(list? L)
+         (calc (list (evaluate (first L))
+                     (second L)
+                     (evaluate (third L))))]
+        [else
+         L]
+        ))
+
+(define (calc L)
+  (cond [(= 0 (third L))
+         'error]
+        [(equal? '+ (second L))
+         (+ (first L) (third L))]
+        [(equal? '- (second L))
+         (- (first L) (third L))]
+        [(equal? '* (second L))
+         (* (first L) (third L))]
+        [(equal? '/ (second L))
+         (/ (first L) (third L))]
+        ))
+  
 ;; Q10
 ;; Not doing Macros
 ;; DONE !!!

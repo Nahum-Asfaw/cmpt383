@@ -1,0 +1,12 @@
+#lang tiny-lisp
+
+;; Example: The flip function
+;; (f x y) -> (f y x)
+;; e.g., (flip f)
+(define (flip f)
+  (lambda (x y) (f y x)))
+
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;; to-nand
+
+;; COMPOSE FLIP = ORIGINAL FUNC
