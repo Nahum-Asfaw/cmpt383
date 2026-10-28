@@ -1,0 +1,10 @@
+#lang tiny-lisp
+
+(define (almost-last L)
+  (cond [(or (empty? L) (empty? (rest L))) ;; '() or |L| = 1
+         'none]
+        [(empty? (rest (rest L)))          ;; |L| = 2
+         (first L)]
+        [else                              ;; |L| > 2
+         (almost-last (rest L))]
+        ))
