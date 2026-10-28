@@ -1,0 +1,136 @@
+#lang tiny-lisp
+
+(define (length L) (cond [(empty? L)
+                          0]
+                         [else
+                          (+ 1 (length (rest L)))]
+                         ))
+
+;; sum-f
+(define (sum L)
+  (foldr (lambda (next acc) (+ acc next)) 0 L))
+
+(define (reverse-f L)
+  (foldr (lambda (next acc) (append acc (list next))) '() L))
+
+(define (filter pred? L)
+  (foldr (lambda (next acc) (cond [(pred? next) (cons next acc)][else acc]))
+         '() L))
+
+(define (foldr op init L)
+  (cond [(empty? L)
+         init]
+        [else
+         (op (first L) 
+            (foldr op init (rest L)))]))
+
+;; concat
+(define (concat lol)
+  (cond [(empty? lol)
+         '()]
+        [else
+         (append (first lol) (concat (rest lol)))]
+        ))
+
+;; append-tjd
+(define (append A B)
+  (foldr cons B A))
+;; ------------------------------------------------------------------------------------------------------------------------
+;; Quicksort
+(define (quicksort L)
+  (cond [(<= (length L) 1)
+         L]
+        [else
+         (let* [(pivot  ;; =
+                 (first L))
+                (smalls ;; =
+                 (filter (lambda (n) (< n pivot)) (rest L)))
+                (bigs   ;; =
+                 (filter (lambda (n) (>= n pivot)) (rest L)))]
+           (concat (list (quicksort smalls) (list pivot) (quicksort bigs))))]
+        ))
+
+;; FLATTEN
+(define (flatten L)
+  (cond [(empty? L)
+         '()]
+        [(list? (first L))
+         (append (flatten (first L)) (flatten (rest L)))]
+        [else
+         (cons (first L) (flatten (rest L)))]
+        ))
+
+;; DEEP FUNCS
+(define (deep-sum L)
+  (sum (flatten L)))
+
+;; member-f
+(define (member? x L)
+  (foldr (lambda (next acc) (or (equal? next x) acc)) #f L))
+
+(define (deep-member? x L)
+  (member? x (flatten L)))
+
+;; doesn't work for everything, e.g., deep-map:
+(define (deep-map f L)
+  (foldr (lambda (next acc)
+           (cons (cond [(list? next)
+                        (deep-map f next)]
+                       [else
+                        (f next)])
+                 acc))
+         '()
+         L))
+
+;; CLOSURES
+
+;; COMPOSITIONS
+(define (f x) (* x x))
+(define (g x) (+ (* 2 x) 1))
+
+#;(define (h x) (f (g x)))
+
+(define (compose f g)
+  (lambda (x) (f (g x)))) ;; all our compose funcs take 1 input
+
+(define h (compose f g))
+(define second (compose first rest))
+
+#;(define (twice f) (compose f f))
+
+(define twice
+  (lambda (f) (compose f f)))
+
+(define garnish
+  (twice (lambda (x) (cons 'cheese x)))) ;; f(f(x))
+
+(define I
+  (lambda (x) x)
+ )
+
+;; (compose-all '(list a b c d))
+;; will use foldr...
+;; (compose a (compose b (compose c (compose d I))))
+;; (compose a (compose b (compose c d))
+(define (compose-all L)
+  (foldr compose I L))
+
+(define (pipeline L)
+  (compose-all (reverse-f L)))
+
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+
+;; non-curried
+(define (add_a x y)
+  (+ x y))
+
+;; 2 + 3 = 5
+;; 2 + x = ??
+
+;; curried addition
+(define add_b
+  (lambda (x) (lambda (y) (+ x y)))) ;; (a x) b
+
+;; f must take exactly 2 inputs
+(define (curry2 f)
+  (lambda (x) (lambda (y) (f x y))))

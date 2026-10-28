@@ -1,0 +1,44 @@
+#lang tiny-lisp
+
+(define (length L) (cond [(empty? L)
+                          0]
+                         [else
+                          (+ 1 (length (rest L)))]
+                         ))
+
+(define (filter pred? L)
+  (foldr (lambda (next acc) (cond [(pred? next) (cons next acc)][else acc]))
+         '() L))
+
+(define (foldr op init L)
+  (cond [(empty? L)
+         init]
+        [else
+         (op (first L) 
+            (foldr op init (rest L)))]))
+
+;; concat
+(define (concat lol)
+  (cond [(empty? lol)
+         '()]
+        [else
+         (append (first lol) (concat (rest lol)))]
+        ))
+
+;; append-tjd
+(define (append A B)
+  (foldr cons B A))
+
+;; Quicksort
+(define (quicksort L)
+  (cond [(<= (length L) 1)
+         L]
+        [else
+         (let* [(pivot
+                 (first L))
+                (smalls
+                 (filter (lambda (n) (< n pivot)) (rest L)))
+                (bigs
+                 (filter (lambda (n) (>= n pivot)) (rest L)))]
+           (concat (quicksort smalls) (list pivot) (quicksort bigs)))]
+        ))
