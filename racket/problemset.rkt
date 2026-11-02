@@ -43,22 +43,22 @@
 ;; and if it does don't cons it. O(n**2)...
 
 ;; helper
-(define (exists? x L)
+(define (member? x L)
   (cond [(empty? L)
          #f]
         [(equal? x (first L))
          #t]
         [else
-         (exists? x (rest L))]
+         (member? x (rest L))]
         ))
 
 (define (my-remove-duplicates-h L acc)
   (cond [(empty? L)
          acc]
-        [(exists? (first L) acc)
+        [(member? (first L) acc)
          (my-remove-duplicates-h (rest L) acc)]
         [else
-         (my-remove-duplicates-h (rest L) (append acc (list (first L))))]
+         (my-remove-duplicates-h (rest L) (append acc (list (first L))))] ;; doesn't matter since opp is already O(n**2)...
         ))
 
 (define (my-remove-duplicates L)
@@ -178,7 +178,9 @@
         ))
 
 (define (calc L)
-  (cond [(= 0 (third L))
+  (cond [(and (= 0 (third L)) (equal? '/ (second L))) ;; x / 0
+         'error]
+        [(or (equal? 'error (first L)) (equal? 'error (third L))) ;; there is an error term
          'error]
         [(equal? '+ (second L))
          (+ (first L) (third L))]
